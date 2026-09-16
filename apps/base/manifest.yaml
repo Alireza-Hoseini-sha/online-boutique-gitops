@@ -1,0 +1,1252 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: online-boutique
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: paymentservice-sa
+  namespace: online-boutique
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: paymentservice-reader
+  namespace: online-boutique
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: paymentservice-reader-binding
+  namespace: online-boutique
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: paymentservice-reader
+subjects:
+- kind: ServiceAccount
+  name: paymentservice-sa
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  PORT: "9555"
+kind: ConfigMap
+metadata:
+  name: adservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  REDIS_ADDR: redis-cart:6379
+kind: ConfigMap
+metadata:
+  name: cartservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  CART_SERVICE_ADDR: cartservice:7070
+  CURRENCY_SERVICE_ADDR: currencyservice:7000
+  EMAIL_SERVICE_ADDR: emailservice:5000
+  PAYMENT_SERVICE_ADDR: paymentservice:50051
+  PORT: "5050"
+  PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
+  SHIPPING_SERVICE_ADDR: shippingservice:50051
+kind: ConfigMap
+metadata:
+  name: checkoutservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  DISABLE_PROFILER: "1"
+  PORT: "7000"
+kind: ConfigMap
+metadata:
+  name: currencyservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  DISABLE_PROFILER: "1"
+  PORT: "8080"
+kind: ConfigMap
+metadata:
+  name: emailservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  AD_SERVICE_ADDR: adservice:9555
+  CART_SERVICE_ADDR: cartservice:7070
+  CHECKOUT_SERVICE_ADDR: checkoutservice:5050
+  CURRENCY_SERVICE_ADDR: currencyservice:7000
+  ENABLE_PROFILER: "0"
+  ENV_PLATFORM: local
+  FRONTEND_MESSAGE: This is a Portfolio project for a local Kubernetes Cluster by
+    Alireza Hoseini
+  PORT: "8080"
+  PRODUCT_CATALOG_SERVICE_ADDR: productcatalogservice:3550
+  RECOMMENDATION_SERVICE_ADDR: recommendationservice:8080
+  SHIPPING_SERVICE_ADDR: shippingservice:50051
+kind: ConfigMap
+metadata:
+  name: frontend
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  DISABLE_PROFILER: "1"
+  PORT: "50051"
+kind: ConfigMap
+metadata:
+  name: paymentservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  DISABLE_PROFILER: "1"
+  PORT: "3550"
+kind: ConfigMap
+metadata:
+  name: productcatalogservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  DISABLE_PROFILER: "1"
+  PORT: "50051"
+kind: ConfigMap
+metadata:
+  name: recommendationservice
+  namespace: online-boutique
+---
+apiVersion: v1
+data:
+  DISABLE_PROFILER: "1"
+  PORT: "50051"
+kind: ConfigMap
+metadata:
+  name: shippingservice
+  namespace: online-boutique
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: paymentservice-secret
+  namespace: online-boutique
+stringData:
+  api-key: FAKE-PAYMENT-API-KEY-12345
+  merchant-id: FAKE-MERCHANT-001
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: adservice
+  name: adservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 9555
+    targetPort: 9555
+  selector:
+    app: adservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 7070
+    targetPort: 7070
+  selector:
+    app: cartservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: checkoutservice
+  name: checkoutservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 5050
+    targetPort: 5050
+  selector:
+    app: checkoutservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: currencyservice
+  name: currencyservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 7000
+    targetPort: 7000
+  selector:
+    app: currencyservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: emailservice
+  name: emailservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 5000
+    targetPort: 8080
+  selector:
+    app: emailservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+  namespace: online-boutique
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: frontend
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: paymentservice
+  name: paymentservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  selector:
+    app: paymentservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: productcatalogservice
+  name: productcatalogservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 3550
+    targetPort: 3550
+  selector:
+    app: productcatalogservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: recommendationservice
+  name: recommendationservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: recommendationservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis-cart
+  name: redis-cart
+  namespace: online-boutique
+spec:
+  ports:
+  - name: tcp-redis
+    port: 6379
+    targetPort: 6379
+  selector:
+    app: redis-cart
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: shippingservice
+  name: shippingservice
+  namespace: online-boutique
+spec:
+  ports:
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  selector:
+    app: shippingservice
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: adservice
+  name: adservice
+  namespace: online-boutique
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: adservice
+  template:
+    metadata:
+      labels:
+        app: adservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: adservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/adservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 9555
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        name: adservice
+        ports:
+        - containerPort: 9555
+        readinessProbe:
+          grpc:
+            port: 9555
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        resources:
+          limits:
+            cpu: 300m
+            memory: 300Mi
+          requests:
+            cpu: 200m
+            memory: 180Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+  namespace: online-boutique
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: cartservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/cartservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 7070
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: cartservice
+        ports:
+        - containerPort: 7070
+        readinessProbe:
+          grpc:
+            port: 7070
+          initialDelaySeconds: 15
+        resources:
+          limits:
+            cpu: 300m
+            memory: 128Mi
+          requests:
+            cpu: 200m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: checkoutservice
+  name: checkoutservice
+  namespace: online-boutique
+spec:
+  selector:
+    matchLabels:
+      app: checkoutservice
+  template:
+    metadata:
+      labels:
+        app: checkoutservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: checkoutservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/checkoutservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 5050
+        name: checkoutservice
+        ports:
+        - containerPort: 5050
+        readinessProbe:
+          grpc:
+            port: 5050
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: currencyservice
+  name: currencyservice
+  namespace: online-boutique
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: currencyservice
+  template:
+    metadata:
+      labels:
+        app: currencyservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: currencyservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/currencyservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 7000
+        name: currencyservice
+        ports:
+        - containerPort: 7000
+          name: grpc
+        readinessProbe:
+          grpc:
+            port: 7000
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: emailservice
+  name: emailservice
+  namespace: online-boutique
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emailservice
+  template:
+    metadata:
+      labels:
+        app: emailservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: emailservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/emailservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 8080
+          periodSeconds: 5
+        name: emailservice
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          grpc:
+            port: 8080
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+  namespace: online-boutique
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: frontend
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/frontend:v0.10.6
+        livenessProbe:
+          httpGet:
+            httpHeaders:
+            - name: Cookie
+              value: shop_session-id=x-liveness-probe
+            path: /_healthz
+            port: 8080
+          initialDelaySeconds: 10
+        name: frontend
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: Cookie
+              value: shop_session-id=x-readiness-probe
+            path: /_healthz
+            port: 8080
+          initialDelaySeconds: 10
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: paymentservice
+  name: paymentservice
+  namespace: online-boutique
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: paymentservice
+  template:
+    metadata:
+      labels:
+        app: paymentservice
+    spec:
+      containers:
+      - env:
+        - name: PAYMENT_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: api-key
+              name: paymentservice-secret
+        - name: PAYMENT_MERCHANT_ID
+          valueFrom:
+            secretKeyRef:
+              key: merchant-id
+              name: paymentservice-secret
+        envFrom:
+        - configMapRef:
+            name: paymentservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/paymentservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 50051
+        name: paymentservice
+        ports:
+        - containerPort: 50051
+        readinessProbe:
+          grpc:
+            port: 50051
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      serviceAccountName: paymentservice-sa
+      terminationGracePeriodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: productcatalogservice
+  name: productcatalogservice
+  namespace: online-boutique
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: productcatalogservice
+  template:
+    metadata:
+      labels:
+        app: productcatalogservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: productcatalogservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/productcatalogservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 3550
+        name: productcatalogservice
+        ports:
+        - containerPort: 3550
+        readinessProbe:
+          grpc:
+            port: 3550
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: recommendationservice
+  name: recommendationservice
+  namespace: online-boutique
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: recommendationservice
+  template:
+    metadata:
+      labels:
+        app: recommendationservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: recommendationservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/recommendationservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 8080
+          periodSeconds: 5
+        name: recommendationservice
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          grpc:
+            port: 8080
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 450Mi
+          requests:
+            cpu: 100m
+            memory: 220Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis-cart
+  name: redis-cart
+  namespace: online-boutique
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-cart
+  template:
+    metadata:
+      labels:
+        app: redis-cart
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - image: redis:8.10.1-alpine3.23
+        livenessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        name: redis
+        ports:
+        - containerPort: 6379
+        readinessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        resources:
+          limits:
+            cpu: 125m
+            memory: 256Mi
+          requests:
+            cpu: 70m
+            memory: 200Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      volumes:
+      - emptyDir: {}
+        name: redis-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shippingservice
+  name: shippingservice
+  namespace: online-boutique
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shippingservice
+  template:
+    metadata:
+      labels:
+        app: shippingservice
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: shippingservice
+        image: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/shippingservice:v0.10.6
+        livenessProbe:
+          grpc:
+            port: 50051
+        name: shippingservice
+        ports:
+        - containerPort: 50051
+        readinessProbe:
+          grpc:
+            port: 50051
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend
+  namespace: online-boutique
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 50
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 100
+      stabilizationWindowSeconds: 0
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 60
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: boutique-ingress
+  namespace: online-boutique
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: boutique.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app: adservice
+  name: adservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - port: 9555
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: adservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cartservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    - podSelector:
+        matchLabels:
+          app: checkoutservice
+    ports:
+    - port: 7070
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: cartservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: checkoutservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - port: 5050
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: checkoutservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: currencyservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    - podSelector:
+        matchLabels:
+          app: checkoutservice
+    ports:
+    - port: 7000
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: currencyservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: online-boutique
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: emailservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: checkoutservice
+    ports:
+    - port: 8080
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: emailservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: loadgenerator
+    ports:
+    - port: 8080
+      protocol: TCP
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: paymentservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: checkoutservice
+    ports:
+    - port: 50051
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: paymentservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: productcatalogservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    - podSelector:
+        matchLabels:
+          app: checkoutservice
+    - podSelector:
+        matchLabels:
+          app: recommendationservice
+    ports:
+    - port: 3550
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: productcatalogservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: recommendationservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - port: 8080
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: recommendationservice
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-cart-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: cartservice
+    ports:
+    - port: 6379
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: redis-cart
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: shippingservice-ingress
+  namespace: online-boutique
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    - podSelector:
+        matchLabels:
+          app: checkoutservice
+    ports:
+    - port: 50051
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: shippingservice
+  policyTypes:
+  - Ingress

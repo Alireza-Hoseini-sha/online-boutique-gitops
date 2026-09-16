@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+
+metadata:
+  name: paymentservice-reader-binding
+
+
+subjects:
+  - kind: ServiceAccount
+    name: paymentservice-sa
+
+roleRef:
+  kind: Role
+  name: paymentservice-reader
+  apiGroup: rbac.authorization.k8s.io

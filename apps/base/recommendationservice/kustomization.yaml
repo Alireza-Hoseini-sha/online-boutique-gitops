@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+images:
+  - name: recommendationservice
+    newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/recommendationservice
+    newTag: v0.10.6
+
+configMapGenerator:
+  - name: recommendationservice
+    literals:
+    - PORT=50051
+    - DISABLE_PROFILER=1
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+- recommendationservice-dpl.yaml
+- recommendationservice-svc.yaml
+- recommendationservice-ingress-netpol.yaml
+
