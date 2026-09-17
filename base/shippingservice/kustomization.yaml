@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+  - name: shippingservice
+    literals:
+    - PORT=50051
+    - DISABLE_PROFILER=1
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+- shippingservice-dpl.yaml
+- shippingservice-svc.yaml
+- shippingservice-ingress-netpol.yaml
+

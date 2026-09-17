@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  template:
+    spec:
+      containers:
+      - name: frontend
+        resources:
+          requests: # The minimum resources required to run the container, I SHOULD CHANGE THIS LATER
+            cpu: 100m
+            memory: 64Mi
+          limits: # The maximum resources that can be used by the container, I SHOULD CHANGE THIS LATER
+            cpu: 200m
+            memory: 128Mi
+            

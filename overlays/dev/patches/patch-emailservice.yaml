@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emailservice
+  labels:
+    app: emailservice
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: emailservice
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+    

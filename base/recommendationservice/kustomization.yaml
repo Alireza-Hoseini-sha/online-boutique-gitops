@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+  - name: recommendationservice
+    literals:
+    - PORT=8080
+    - DISABLE_PROFILER=1
+    - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+- recommendationservice-dpl.yaml
+- recommendationservice-svc.yaml
+- recommendationservice-ingress-netpol.yaml
+

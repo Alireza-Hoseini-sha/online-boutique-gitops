@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+#  replicas: 2   # Line is commented because we used hpa. In futer applies it will overwrite hpa's min replicas at first.
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+  #    serviceAccountName: frontend # The service account to use for the container
+      automountServiceAccountToken: false # Whether to automatically mount a service account token to the container
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+
+      containers:
+        - name: frontend
+          image: frontend
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-readiness-probe"
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: 8080
+              httpHeaders:
+              - name: "Cookie"
+                value: "shop_session-id=x-liveness-probe"
+          envFrom:
+            - configMapRef:
+                name: frontend

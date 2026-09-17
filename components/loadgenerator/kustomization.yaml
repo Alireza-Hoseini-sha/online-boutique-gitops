@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+images:
+  - name: busybox
+    newName: busybox
+    newTag: 1.38.0@sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
+  
+  - name: loadgenerator
+    newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator
+    newTag: v0.10.6
+
+configMapGenerator:
+  - name: loadgenerator
+    literals:
+    - FRONTEND_ADDR=frontend:80
+    - USERS=10
+    - RATE=1
+
+resources:
+- loadgenerator-dpl.yaml
