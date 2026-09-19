@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-online-boutique
+  namespace: argocd
+
+spec:
+  project: online-boutique
+
+  source:
+    repoURL: https://github.com/Alireza-Hoseini-sha/online-boutique-gitops.git 
+    targetRevision: main
+    path: overlays/prod
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prod-online-boutique
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

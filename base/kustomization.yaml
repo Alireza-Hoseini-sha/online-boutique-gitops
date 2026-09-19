@@ -5,15 +5,15 @@ images:
   - name: adservice
     newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/adservice
     newTag: v0.10.6
-  
+
   - name: cartservice
     newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/cartservice
     newTag: v0.10.6
-  
+
   - name: checkoutservice
     newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/checkoutservice
     newTag: v0.10.6
-  
+
   - name: currencyservice
     newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/currencyservice
     newTag: v0.10.6
@@ -21,7 +21,7 @@ images:
   - name: emailservice
     newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/emailservice
     newTag: v0.10.6
-  
+
   - name: frontend
     newName: us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/frontend
     newTag: v0.10.6
@@ -60,3 +60,4 @@ resources:
   - redis-cart/
   - shippingservice/
   - gitlab-ci-svc-rbac.yaml
+  

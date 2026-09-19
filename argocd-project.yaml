@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: online-boutique
+  namespace: argocd
+
+spec:
+  description: Online Boutique GitOps project
+
+  sourceRepos:
+    - https://github.com/Alireza-Hoseini-sha/online-boutique-gitops.git 
+
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: dev-online-boutique
+
+    - server: https://kubernetes.default.svc
+      namespace: prod-online-boutique
+
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

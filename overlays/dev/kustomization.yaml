@@ -22,3 +22,5 @@ components:
 resources:
   - ../../base
   - namespace.yaml
+  - frontend-ingress.yaml
+  

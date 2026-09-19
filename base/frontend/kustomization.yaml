@@ -30,5 +30,4 @@ resources:
 - frontend-dpl.yaml
 - frontend-svc.yaml
 - frontend-hpa.yaml
-- frontend-ingress.yaml
 - frontend-ingress-netpol.yaml
