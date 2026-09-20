@@ -3,6 +3,51 @@ kind: Kustomization
 
 namespace: prod-online-boutique
 
+images:
+  - name: adservice
+    newName: 192.168.122.1:8082/microservices-demo/adservice
+    newTag: df1ad097
+
+  - name: cartservice
+    newName: 192.168.122.1:8082/microservices-demo/cartservice
+    newTag: df1ad097
+
+  - name: checkoutservice
+    newName: 192.168.122.1:8082/microservices-demo/checkoutservice
+    newTag: df1ad097
+
+  - name: currencyservice
+    newName: 192.168.122.1:8082/microservices-demo/currencyservice
+    newTag: df1ad097
+
+  - name: emailservice
+    newName: 192.168.122.1:8082/microservices-demo/emailservice
+    newTag: df1ad097
+
+  - name: frontend
+    newName: 192.168.122.1:8082/microservices-demo/frontend
+    newTag: df1ad097
+
+  - name: paymentservice
+    newName: 192.168.122.1:8082/microservices-demo/paymentservice
+    newTag: df1ad097
+
+  - name: productcatalogservice
+    newName: 192.168.122.1:8082/microservices-demo/productcatalogservice
+    newTag: df1ad097
+
+  - name: recommendationservice
+    newName: 192.168.122.1:8082/microservices-demo/recommendationservice
+    newTag: df1ad097
+
+  - name: shippingservice
+    newName: 192.168.122.1:8082/microservices-demo/shippingservice
+    newTag: df1ad097
+
+  - name: redis
+    newName: redis
+    newTag: 8.10.1-alpine3.23
+
 patches:
   - path: patches/patch-adservice.yaml
   - path: patches/patch-cartservice.yaml
@@ -15,8 +60,6 @@ patches:
   - path: patches/patch-recommendationservice.yaml
   - path: patches/patch-redis-cart.yaml
   - path: patches/patch-shippingservice.yaml
-
-
 
 resources:
   - ../../base
