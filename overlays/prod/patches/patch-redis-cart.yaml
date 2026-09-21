@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: redis-cart
   labels:
@@ -17,4 +17,3 @@ spec:
           requests:
             cpu: 70m
             memory: 200Mi
-            

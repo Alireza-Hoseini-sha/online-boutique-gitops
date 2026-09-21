@@ -53,3 +53,4 @@ resources:
   - ../../base
   - namespace.yaml
   - frontend-ingress.yaml
+  - redis-cart-pv.yaml

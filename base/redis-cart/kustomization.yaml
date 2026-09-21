@@ -8,5 +8,4 @@ resources:
 - redis-cart-sts.yaml
 - redis-cart-ingress-netpol.yaml
 - redis-cart-svc.yaml
-- redis-cart-pv.yaml 
 - redis-cart-pvc.yaml
